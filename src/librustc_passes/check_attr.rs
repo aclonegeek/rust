@@ -67,7 +67,7 @@ impl CheckAttrVisitor<'tcx> {
             } else if attr.check_name(sym::target_feature) {
                 self.check_target_feature(attr, span, target)
             } else if attr.check_name(sym::track_caller) {
-                self.check_track_caller(&attr.span, attrs, span, target)
+                self.check_track_caller(hir_id, attr, attrs, span, target)
             } else {
                 true
             };
@@ -135,7 +135,8 @@ impl CheckAttrVisitor<'tcx> {
     /// Checks if a `#[track_caller]` is applied to a non-naked function. Returns `true` if valid.
     fn check_track_caller(
         &self,
-        attr_span: &Span,
+        hir_id: HirId,
+        attr: &Attribute,
         attrs: &'hir [Attribute],
         span: &Span,
         target: Target,
@@ -144,28 +145,24 @@ impl CheckAttrVisitor<'tcx> {
             Target::Fn if attr::contains_name(attrs, sym::naked) => {
                 struct_span_err!(
                     self.tcx.sess,
-                    *attr_span,
+                    attr.span,
                     E0736,
                     "cannot use `#[track_caller]` with `#[naked]`",
                 )
                 .emit();
                 false
             }
-            Target::Fn | Target::Method(MethodKind::Inherent) => true,
-            Target::Method(_) => {
-                struct_span_err!(
-                    self.tcx.sess,
-                    *attr_span,
-                    E0738,
-                    "`#[track_caller]` may not be used on trait methods",
-                )
-                .emit();
-                false
+            Target::Method(MethodKind::Trait { body: false }) | Target::ForeignFn => {
+                self.tcx.struct_span_lint_hir(UNUSED_ATTRIBUTES, hir_id, attr.span, |lint| {
+                    lint.build("`#[track_caller]` is ignored on function prototypes").emit()
+                });
+                true
             }
+            Target::Fn | Target::Method(..) => true,
             _ => {
                 struct_span_err!(
                     self.tcx.sess,
-                    *attr_span,
+                    attr.span,
                     E0739,
                     "attribute should be applied to function"
                 )

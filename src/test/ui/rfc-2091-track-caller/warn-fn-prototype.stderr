@@ -1,0 +1,14 @@
+warning: `#[track_caller]` is ignored on function prototypes
+  --> $DIR/warn-fn-prototype.rs:12:5
+   |
+LL |     #[track_caller]
+   |     ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_attributes)]` on by default
+
+warning: `#[track_caller]` is ignored on function prototypes
+  --> $DIR/warn-fn-prototype.rs:7:5
+   |
+LL |     #[track_caller]
+   |     ^^^^^^^^^^^^^^^
+
