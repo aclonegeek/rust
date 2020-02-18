@@ -1828,6 +1828,7 @@ where
     ///
     /// Panics if the key is not present in the `BTreeMap`.
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, key: &Q) -> &V {
         self.get(key).expect("no entry found for key")
     }

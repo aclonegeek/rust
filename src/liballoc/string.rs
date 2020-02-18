@@ -1995,6 +1995,7 @@ impl ops::Index<ops::Range<usize>> for String {
     type Output = str;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, index: ops::Range<usize>) -> &str {
         &self[..][index]
     }
@@ -2004,6 +2005,7 @@ impl ops::Index<ops::RangeTo<usize>> for String {
     type Output = str;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, index: ops::RangeTo<usize>) -> &str {
         &self[..][index]
     }
@@ -2013,6 +2015,7 @@ impl ops::Index<ops::RangeFrom<usize>> for String {
     type Output = str;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, index: ops::RangeFrom<usize>) -> &str {
         &self[..][index]
     }
@@ -2022,6 +2025,7 @@ impl ops::Index<ops::RangeFull> for String {
     type Output = str;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, _index: ops::RangeFull) -> &str {
         unsafe { str::from_utf8_unchecked(&self.vec) }
     }
@@ -2031,6 +2035,7 @@ impl ops::Index<ops::RangeInclusive<usize>> for String {
     type Output = str;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, index: ops::RangeInclusive<usize>) -> &str {
         Index::index(&**self, index)
     }
@@ -2040,6 +2045,7 @@ impl ops::Index<ops::RangeToInclusive<usize>> for String {
     type Output = str;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, index: ops::RangeToInclusive<usize>) -> &str {
         Index::index(&**self, index)
     }
@@ -2048,6 +2054,7 @@ impl ops::Index<ops::RangeToInclusive<usize>> for String {
 #[stable(feature = "derefmut_for_string", since = "1.3.0")]
 impl ops::IndexMut<ops::Range<usize>> for String {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, index: ops::Range<usize>) -> &mut str {
         &mut self[..][index]
     }
@@ -2055,6 +2062,7 @@ impl ops::IndexMut<ops::Range<usize>> for String {
 #[stable(feature = "derefmut_for_string", since = "1.3.0")]
 impl ops::IndexMut<ops::RangeTo<usize>> for String {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, index: ops::RangeTo<usize>) -> &mut str {
         &mut self[..][index]
     }
@@ -2062,6 +2070,7 @@ impl ops::IndexMut<ops::RangeTo<usize>> for String {
 #[stable(feature = "derefmut_for_string", since = "1.3.0")]
 impl ops::IndexMut<ops::RangeFrom<usize>> for String {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, index: ops::RangeFrom<usize>) -> &mut str {
         &mut self[..][index]
     }
@@ -2069,6 +2078,7 @@ impl ops::IndexMut<ops::RangeFrom<usize>> for String {
 #[stable(feature = "derefmut_for_string", since = "1.3.0")]
 impl ops::IndexMut<ops::RangeFull> for String {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, _index: ops::RangeFull) -> &mut str {
         unsafe { str::from_utf8_unchecked_mut(&mut *self.vec) }
     }
@@ -2076,6 +2086,7 @@ impl ops::IndexMut<ops::RangeFull> for String {
 #[stable(feature = "inclusive_range", since = "1.26.0")]
 impl ops::IndexMut<ops::RangeInclusive<usize>> for String {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, index: ops::RangeInclusive<usize>) -> &mut str {
         IndexMut::index_mut(&mut **self, index)
     }
@@ -2083,6 +2094,7 @@ impl ops::IndexMut<ops::RangeInclusive<usize>> for String {
 #[stable(feature = "inclusive_range", since = "1.26.0")]
 impl ops::IndexMut<ops::RangeToInclusive<usize>> for String {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, index: ops::RangeToInclusive<usize>) -> &mut str {
         IndexMut::index_mut(&mut **self, index)
     }

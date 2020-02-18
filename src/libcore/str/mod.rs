@@ -1711,6 +1711,7 @@ mod traits {
         type Output = I::Output;
 
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index(&self, index: I) -> &I::Output {
             index.index(self)
         }
@@ -1722,6 +1723,7 @@ mod traits {
         I: SliceIndex<str>,
     {
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index_mut(&mut self, index: I) -> &mut I::Output {
             index.index_mut(self)
         }
@@ -1729,6 +1731,7 @@ mod traits {
 
     #[inline(never)]
     #[cold]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn str_index_overflow_fail() -> ! {
         panic!("attempted to index str up to maximum usize");
     }
@@ -1849,11 +1852,13 @@ mod traits {
             super::from_utf8_unchecked_mut(slice::from_raw_parts_mut(ptr, len))
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index(self, slice: &str) -> &Self::Output {
             let (start, end) = (self.start, self.end);
             self.get(slice).unwrap_or_else(|| super::slice_error_fail(slice, start, end))
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index_mut(self, slice: &mut str) -> &mut Self::Output {
             // is_char_boundary checks that the index is in [0, .len()]
             // cannot reuse `get` as above, because of NLL trouble
@@ -1916,11 +1921,13 @@ mod traits {
             super::from_utf8_unchecked_mut(slice::from_raw_parts_mut(ptr, self.end))
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index(self, slice: &str) -> &Self::Output {
             let end = self.end;
             self.get(slice).unwrap_or_else(|| super::slice_error_fail(slice, 0, end))
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index_mut(self, slice: &mut str) -> &mut Self::Output {
             if slice.is_char_boundary(self.end) {
                 // SAFETY: just checked that `end` is on a char boundary.
@@ -1981,11 +1988,13 @@ mod traits {
             super::from_utf8_unchecked_mut(slice::from_raw_parts_mut(ptr, len))
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index(self, slice: &str) -> &Self::Output {
             let (start, end) = (self.start, slice.len());
             self.get(slice).unwrap_or_else(|| super::slice_error_fail(slice, start, end))
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index_mut(self, slice: &mut str) -> &mut Self::Output {
             if slice.is_char_boundary(self.start) {
                 // SAFETY: just checked that `start` is on a char boundary.
@@ -2040,6 +2049,7 @@ mod traits {
             (*self.start()..self.end() + 1).get_unchecked_mut(slice)
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index(self, slice: &str) -> &Self::Output {
             if *self.end() == usize::max_value() {
                 str_index_overflow_fail();
@@ -2047,6 +2057,7 @@ mod traits {
             (*self.start()..self.end() + 1).index(slice)
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index_mut(self, slice: &mut str) -> &mut Self::Output {
             if *self.end() == usize::max_value() {
                 str_index_overflow_fail();
@@ -2089,6 +2100,7 @@ mod traits {
             (..self.end + 1).get_unchecked_mut(slice)
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index(self, slice: &str) -> &Self::Output {
             if self.end == usize::max_value() {
                 str_index_overflow_fail();
@@ -2096,6 +2108,7 @@ mod traits {
             (..self.end + 1).index(slice)
         }
         #[inline]
+        #[cfg_attr(not(bootstrap), track_caller)]
         fn index_mut(self, slice: &mut str) -> &mut Self::Output {
             if self.end == usize::max_value() {
                 str_index_overflow_fail();
@@ -2120,6 +2133,7 @@ fn truncate_to_char_boundary(s: &str, mut max: usize) -> (bool, &str) {
 
 #[inline(never)]
 #[cold]
+#[cfg_attr(not(bootstrap), track_caller)]
 fn slice_error_fail(s: &str, begin: usize, end: usize) -> ! {
     const MAX_DISPLAY_LENGTH: usize = 256;
     let (truncated, s_trunc) = truncate_to_char_boundary(s, MAX_DISPLAY_LENGTH);

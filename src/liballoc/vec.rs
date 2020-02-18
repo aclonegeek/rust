@@ -1881,6 +1881,7 @@ impl<T, I: SliceIndex<[T]>> Index<I> for Vec<T> {
     type Output = I::Output;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, index: I) -> &Self::Output {
         Index::index(&**self, index)
     }
@@ -1893,6 +1894,7 @@ impl<T, I: SliceIndex<[T]>> Index<I> for Vec<T> {
 )]
 impl<T, I: SliceIndex<[T]>> IndexMut<I> for Vec<T> {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, index: I) -> &mut Self::Output {
         IndexMut::index_mut(&mut **self, index)
     }
