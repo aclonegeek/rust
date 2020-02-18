@@ -2257,6 +2257,7 @@ impl<T> [T] {
     /// assert_eq!(&bytes, b"Hello, Wello!");
     /// ```
     #[stable(feature = "copy_within", since = "1.37.0")]
+    #[cfg_attr(not(bootstrap), track_caller)]
     pub fn copy_within<R: ops::RangeBounds<usize>>(&mut self, src: R, dest: usize)
     where
         T: Copy,
@@ -2652,6 +2653,7 @@ where
     type Output = I::Output;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, index: I) -> &I::Output {
         index.index(self)
     }
@@ -2663,6 +2665,7 @@ where
     I: SliceIndex<[T]>,
 {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, index: I) -> &mut I::Output {
         index.index_mut(self)
     }
@@ -2670,18 +2673,21 @@ where
 
 #[inline(never)]
 #[cold]
+#[cfg_attr(not(bootstrap), track_caller)]
 fn slice_index_len_fail(index: usize, len: usize) -> ! {
     panic!("index {} out of range for slice of length {}", index, len);
 }
 
 #[inline(never)]
 #[cold]
+#[cfg_attr(not(bootstrap), track_caller)]
 fn slice_index_order_fail(index: usize, end: usize) -> ! {
     panic!("slice index starts at {} but ends at {}", index, end);
 }
 
 #[inline(never)]
 #[cold]
+#[cfg_attr(not(bootstrap), track_caller)]
 fn slice_index_overflow_fail() -> ! {
     panic!("attempted to index slice up to maximum usize");
 }
@@ -2786,12 +2792,14 @@ impl<T> SliceIndex<[T]> for usize {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(self, slice: &[T]) -> &T {
         // N.B., use intrinsic indexing
         &(*slice)[self]
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(self, slice: &mut [T]) -> &mut T {
         // N.B., use intrinsic indexing
         &mut (*slice)[self]
@@ -2831,6 +2839,7 @@ impl<T> SliceIndex<[T]> for ops::Range<usize> {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(self, slice: &[T]) -> &[T] {
         if self.start > self.end {
             slice_index_order_fail(self.start, self.end);
@@ -2841,6 +2850,7 @@ impl<T> SliceIndex<[T]> for ops::Range<usize> {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(self, slice: &mut [T]) -> &mut [T] {
         if self.start > self.end {
             slice_index_order_fail(self.start, self.end);
@@ -2876,11 +2886,13 @@ impl<T> SliceIndex<[T]> for ops::RangeTo<usize> {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(self, slice: &[T]) -> &[T] {
         (0..self.end).index(slice)
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(self, slice: &mut [T]) -> &mut [T] {
         (0..self.end).index_mut(slice)
     }
@@ -2911,11 +2923,13 @@ impl<T> SliceIndex<[T]> for ops::RangeFrom<usize> {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(self, slice: &[T]) -> &[T] {
         (self.start..slice.len()).index(slice)
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(self, slice: &mut [T]) -> &mut [T] {
         (self.start..slice.len()).index_mut(slice)
     }
@@ -2946,11 +2960,13 @@ impl<T> SliceIndex<[T]> for ops::RangeFull {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(self, slice: &[T]) -> &[T] {
         slice
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(self, slice: &mut [T]) -> &mut [T] {
         slice
     }
@@ -2989,6 +3005,7 @@ impl<T> SliceIndex<[T]> for ops::RangeInclusive<usize> {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(self, slice: &[T]) -> &[T] {
         if *self.end() == usize::max_value() {
             slice_index_overflow_fail();
@@ -2997,6 +3014,7 @@ impl<T> SliceIndex<[T]> for ops::RangeInclusive<usize> {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(self, slice: &mut [T]) -> &mut [T] {
         if *self.end() == usize::max_value() {
             slice_index_overflow_fail();
@@ -3030,11 +3048,13 @@ impl<T> SliceIndex<[T]> for ops::RangeToInclusive<usize> {
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(self, slice: &[T]) -> &[T] {
         (0..=self.end).index(slice)
     }
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(self, slice: &mut [T]) -> &mut [T] {
         (0..=self.end).index_mut(slice)
     }

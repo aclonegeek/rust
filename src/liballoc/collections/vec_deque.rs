@@ -2732,6 +2732,7 @@ impl<A> Index<usize> for VecDeque<A> {
     type Output = A;
 
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index(&self, index: usize) -> &A {
         self.get(index).expect("Out of bounds access")
     }
@@ -2740,6 +2741,7 @@ impl<A> Index<usize> for VecDeque<A> {
 #[stable(feature = "rust1", since = "1.0.0")]
 impl<A> IndexMut<usize> for VecDeque<A> {
     #[inline]
+    #[cfg_attr(not(bootstrap), track_caller)]
     fn index_mut(&mut self, index: usize) -> &mut A {
         self.get_mut(index).expect("Out of bounds access")
     }
